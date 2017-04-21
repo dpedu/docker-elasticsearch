@@ -15,3 +15,4 @@ Note: you'll need to increase vm.max_map_count; Elasticsearch will demand it. Ei
 
 * Override default config file: `-v /data/myconfig.yml:/etc/elasticsearch/elasticsearch.yml`
 * Data is stored in `/var/lib/elasticsearch`
+* Set memory limit like so: `-e "ES_JAVA_OPTS=-Xms8G -Xmx8G"

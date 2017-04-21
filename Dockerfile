@@ -13,6 +13,7 @@ RUN apt-get update ;\
     curl -o /tmp/elasticsearch.deb "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.1.deb" ;\
     dpkg -i /tmp/elasticsearch.deb ;\
     rm /tmp/elasticsearch.deb ;\
+    sed -i -E 's/(\-Xm.[0-9]g)/#\1/' /etc/elasticsearch/jvm.options ;\
     rm -rf /var/lib/apt/lists/*
 
 ADD elasticsearch.conf /etc/supervisor/conf.d/elasticsearch.conf
