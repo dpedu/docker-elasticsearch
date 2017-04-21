@@ -1,0 +1,9 @@
+#!/bin/sh
+
+exec /usr/share/elasticsearch/bin/elasticsearch \
+    -p /var/run/elasticsearch/elasticsearch.pid \
+    -E default.path.home=/usr/share/elasticsearch \
+    -E default.path.logs=/var/log/elasticsearch \
+    -E default.path.data=/var/lib/elasticsearch \
+    -E default.path.conf=/etc/elasticsearch \
+    -E network.host=0.0.0.0 $@
