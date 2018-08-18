@@ -1,22 +1,26 @@
-FROM ubuntu:trusty
+FROM ubuntu:bionic
 
-RUN apt-get update ;\
-    apt-get install -y software-properties-common ;\
-    add-apt-repository -y ppa:webupd8team/java ;\
-    apt-get update ;\
-    echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections;\
-    apt-get install -y oracle-java9-installer ;\
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y wget curl
 
-RUN apt-get update ;\
-    apt-get install -y curl supervisor ;\
-    curl -o /tmp/elasticsearch.deb "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.1.deb" ;\
-    dpkg -i /tmp/elasticsearch.deb ;\
-    rm /tmp/elasticsearch.deb ;\
-    sed -i -E 's/(\-Xm.[0-9]g)/#\1/' /etc/elasticsearch/jvm.options ;\
-    rm -rf /var/lib/apt/lists/*
+ADD get_oracle_jdk_linux_x64.sh /
 
-ADD elasticsearch.conf /etc/supervisor/conf.d/elasticsearch.conf
+RUN /get_oracle_jdk_linux_x64.sh 8 tar.gz && \
+    mkdir  -p /srv/java/8 && \
+    tar xvf java.tar.gz -C /srv/java/8/ --strip-components=1
+
+FROM ubuntu:bionic
+COPY --from=0 /srv /srv
+
+ENV PATH=/srv/java/8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+RUN apt-get update && apt-get install -yqq wget && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*.deb
+RUN wget -qO /tmp/elasticsearch.deb "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.2.deb" && \
+    dpkg -i /tmp/elasticsearch.deb && \
+    rm /tmp/elasticsearch.deb && \
+    sed -i -E 's|^[^#]|#\0|' /etc/elasticsearch/elasticsearch.yml && \
+    sed -i -E 's/(\-Xm.[0-9]g)/#\1/' /etc/elasticsearch/jvm.options
+
 ADD start /start
 
 VOLUME /var/lib/elasticsearch/

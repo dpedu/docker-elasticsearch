@@ -1,7 +1,7 @@
 docker-elasticsearch
 ====================
 
-The latest [Elasticsearch](https://www.elastic.co/products/elasticsearch) for docker, currently 5.3.1.
+The latest [Elasticsearch](https://www.elastic.co/products/elasticsearch) for docker, currently 6.3.2.
 
 *Usage:*
 
